@@ -142,3 +142,8 @@ This project is available for educational and commercial use.
 
 ## Acknowledgments
 Developed as an academic mini-project under the supervision of Mr. Rachid BOUDOUR.
+
+## 📄 Conclusion
+This project successfully delivers a robust and user-friendly HR management system, integrating core functionalities such as employee tracking, leave management, contract supervision, salary processing, and recruitment handling.
+Its dashboards and reporting tools enhance decision-making, while its secure and responsive architecture ensures reliability and efficiency.
+The system serves as a strong foundation for future enhancements and demonstrates the practical application of web development and data modeling skills.
