@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Congé</title>
+    <link rel="stylesheet" href="{% static  'css/font_awesome.css' %}">
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .submit-btn, .cancel-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+        }
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #e5e7eb;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Demande de Congé</h2>
+        <form id="congeForm" onsubmit="return submitConge(event)">
+            <div class="form-group">
+                <label>Employé</label>
+                <select name="employee" required id="employeeSelect">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Type de congé</label>
+                <select name="typeConge" required>
+                    <option value="annuel">Congé annuel</option>
+                    <option value="maladie">Congé maladie</option>
+                    <option value="maternite">Congé maternité/paternité</option>
+                    <option value="sans_solde">Congé sans solde</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" required rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Date de début</label>
+                <input type="date" name="dateDebut" required>
+            </div>
+            <div class="form-group">
+                <label>Date de fin</label>
+                <input type="date" name="dateFin" required>
+            </div>
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="window.location.href='index.html'">Annuler</button>
+                <button type="submit" class="submit-btn">Soumettre</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Populate employee select on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const select = document.getElementById('employeeSelect');
+            
+            employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.nom} ${emp.prenom}`;
+                select.appendChild(option);
+            });
+        });
+
+        function submitConge(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Add to leaves array in localStorage
+            const leaves = JSON.parse(localStorage.getItem('leaves') || '[]');
+            leaves.push({
+                id: Math.random().toString(36).substr(2, 9),
+                status: 'pending',
+                ...data
+            });
+            localStorage.setItem('leaves', JSON.stringify(leaves));
+            
+            // Redirect back to main page
+            window.location.href = 'index.html';
+            return false;
+        }
+    </script>
+</body>
+</html>

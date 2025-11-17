@@ -1,0 +1,454 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard RH</title>
+    <!-- <link rel="stylesheet" href="{% static  'css/font_awesome.css' %}"> -->
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-users-cog"></i>
+                <span>RH Dashboard</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li data-section="service">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Service</span>
+                </li>
+                <li data-section="favoris">
+                    <i class="fas fa-star"></i>
+                    <span>Favoris</span>
+                </li>
+                <li data-section="employes">
+                    <i class="fas fa-users"></i>
+                    <span>Employés</span>
+                </li>
+                <li data-section="conges">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Congés</span>
+                </li>
+                <li data-section="contrat">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Contrat</span>
+                </li>
+                <li data-section="salaire">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Salaire</span>
+                </li>
+                <li data-section="pointage">
+                    <i class="fas fa-clock"></i>
+                    <span>Pointage</span>
+                </li>
+                <li data-section="recrutement">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Recrutement</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Rechercher...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-bell"></i>
+                    <div class="user">
+                        <img src="https://via.placeholder.com/40" alt="User">
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <div class="content-section" id="dashboard-section">
+                <h1>Dashboard</h1>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <h3>Employés</h3>
+                            <p id="employeeCount">{{ employee_count }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="stat-info">
+                            <h3>Congés en cours</h3>
+                            <p id="activeLeaveCount">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-briefcase"></i>
+                        <div class="stat-info">
+                            <h3>Services</h3>
+                            <p id="serviceCount">{{ service_count }}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-file-contract"></i>
+                        <div class="stat-info">
+                            <h3>Contrats actifs</h3>
+                            <p id="activeContractCount">{{ active_contract_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Section -->
+            <div class="content-section" id="service-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Services</h1>
+                    <a href="{% url 'aj_service' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Ajouter Service
+                    </a>
+                </div>
+                <div class="table-container">
+                    <table id="servicesTable">
+                        <thead>
+                            <tr>
+                                <th>Nom du service</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in services %}
+                            <tr>
+                                <td>{{ service.nom_service }}</td>
+                                <td>{{ service.description }}</td>
+                                <td>
+                            
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">Aucun service trouvé.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Favoris Section -->
+            <div class="content-section" id="favoris-section" style="display: none;">
+                <h1>Favoris</h1>
+                <div class="favorites-container">
+                    <div class="favorite-items">
+                        <!-- Favorite items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employés Section -->
+            <div class="content-section" id="employes-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Employés</h1>
+                    <a href="{% url 'aj_employe' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Ajouter Employé
+                    </a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="employeeSearch" placeholder="Rechercher un employé...">
+                </div>
+                <div class="table-container">
+                    <table id="employeesTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Service</th>
+                                <th>Date d'embauche</th>
+                                <th>Date de naissance</th>
+                                <th>Email</th>
+                                <th>Salaire</th>
+                                <th>État</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Employee data will be populated here -->
+                            {% for employe in employes %}
+                            <tr>
+                                <td>{{ employe.nom }}</td>
+                                <td>{{ employe.prenom }}</td>
+                                <td>{{ employe.service }}</td>
+                                <td>today</td>
+                                <td>{{ employe.date_naissance }}</td>
+                                <td>{{ employe.email }}</td>
+                                <td>{{ employe.salaire_base }}</td>
+                                <td>{{ employe.etat }}</td>
+                                <!-- Bouton Modifier -->
+                                <td>
+                                    <a href="{% url 'mod_employe' employe.id %}" class="btn btn-primary">Modifier</a>
+                                    <form action="{% url 'mod_employe' employe.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                </td>   
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Congés Section -->
+            <div class="content-section" id="conges-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Congés</h1>
+                    <a href="{% url 'aj_conge' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Ajouter Congé
+                    </a>
+                </div>
+                <div class="conges-container">
+                    <h2>Demandes en attente</h2>
+                    <table id="pendingCongesTable">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Type de congé</th>
+                                <th>Description</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Pending leaves data -->
+                        </tbody>
+                    </table>
+
+                    <h2>Congés approuvés</h2>
+                    <table id="approvedCongesTable">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Jours disponibles</th>
+                                <th>Jours utilisés</th>
+                                <th>Jours restants</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Approved leaves data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Contrat Section -->
+            <div class="content-section" id="contrat-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Contrats</h1>
+                    <a href="{% url 'aj_contrat' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Ajouter Contrat
+                    </a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="contratSearch" placeholder="Rechercher un contrat...">
+                </div>
+                <div class="table-container">
+                    <table id="contratsTable">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Type de contrat</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Contract data will be populated here -->
+                            {% for contrat in contrats %}
+                            <tr>
+                                <td>{{ contrat.employe }}</td>
+                                <td>{{ contrat.type_contrat }}</td>
+                                <td>{{ contrat.date_debut }}</td>
+                                <td>{% if contrat.date_fin %}{{ contrat.date_fin }}{% else %}N/A{% endif %}</td>
+                                <td>
+                                
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">Aucun contrat trouvé.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Salaire Section -->
+            <div class="content-section" id="salaire-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Salaires</h1>
+                    <button class="add-btn" onclick="showSalaireModal()">
+                        <i class="fas fa-plus"></i> Ajouter Salaire
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="salairesTable">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Salaire</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Salary data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pointage Section -->
+            <div class="content-section" id="pointage-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Pointage</h1>
+                    <button class="add-btn" onclick="showPointageModal()">
+                        <i class="fas fa-plus"></i> Ajouter Pointage
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="pointageTable">
+                        <thead>
+                            <tr>
+                                <th>Employé</th>
+                                <th>Date</th>
+                                <th>Heure d'arrivée</th>
+                                <th>Heure de départ</th>
+                                <th>Total heures</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Pointage data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recrutement Section -->
+            <div class="content-section" id="recrutement-section" style="display: none;">
+                <div class="section-header">
+                    <h1>Recrutement</h1>
+                    <a href="{% url 'aj_offre' %}" class="add-btn">
+                        <i class="fas fa-plus"></i> Ajouter Offre
+                    </a>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="offreSearch" placeholder="Rechercher une offre...">
+                </div>
+                <div class="table-container">
+                    <table id="offresTable">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Contrat</th>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Date limite</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Recruitment data will be populated here -->
+                            {% for offre in offres %}
+                            <tr>
+                                <td>{{ offre.titre }}</td>
+                                <td>{{ offre.Contrat }}</td>
+                                <td>{{ offre.service.nom_service }}</td>
+                                <td>{{ offre.description }}</td>
+                                <td>{{ offre.date_limite }}</td>
+                                <td>{{ offre.statut }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="salaireModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSalaireModal()">&times;</span>
+            <h2>Ajouter un Salaire</h2>
+            <form id="salaireForm" onsubmit="return submitSalaire(event)">
+                <div class="form-group">
+                    <label>Employé</label>
+                    <select name="employee" required id="employeeSelect">
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Montant</label>
+                    <input type="number" name="montant" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="closeSalaireModal()">Annuler</button>
+                    <button type="submit" class="submit-btn">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="pointageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePointageModal()">&times;</span>
+            <h2>Ajouter un Pointage</h2>
+            <form id="pointageForm" onsubmit="return submitPointage(event)">
+                <div class="form-group">
+                    <label>Employé</label>
+                    <select name="employee" required id="employeeSelectPointage">
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label>Heure d'arrivée</label>
+                    <input type="time" name="heureArrivee" required>
+                </div>
+                <div class="form-group">
+                    <label>Heure de départ</label>
+                    <input type="time" name="heureDepart" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="closePointageModal()">Annuler</button>
+                    <button type="submit" class="submit-btn">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static  'js/scripts.js' %}"></script>
+</body>
+</html>

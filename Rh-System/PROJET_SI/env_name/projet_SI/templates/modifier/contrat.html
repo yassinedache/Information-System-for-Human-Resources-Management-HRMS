@@ -1,0 +1,152 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier un Contrat</title>
+    <link rel="stylesheet" href="{% static  'css/font_awesome.css' %}">
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .submit-btn, .cancel-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+        }
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #e5e7eb;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Modifier un Contrat</h2>
+        <form id="contratForm" onsubmit="return updateContrat(event)">
+            <input type="hidden" id="contratId" name="id">
+            <div class="form-group">
+                <label>Employé</label>
+                <select name="employee" required id="employeeSelect">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Type de contrat</label>
+                <select name="typeContrat" required id="typeContrat">
+                    <option value="CDI">CDI</option>
+                    <option value="CDD">CDD</option>
+                    <option value="Stage">Stage</option>
+                    <option value="Interim">Intérim</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date de début</label>
+                <input type="date" name="dateDebut" required id="dateDebut">
+            </div>
+            <div class="form-group">
+                <label>Date de fin</label>
+                <input type="date" name="dateFin" id="dateFin">
+            </div>
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="window.location.href='index.html'">Annuler</button>
+                <button type="submit" class="submit-btn">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Get contract ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const contratId = urlParams.get('id');
+
+        // Load contract data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load employees for select
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const select = document.getElementById('employeeSelect');
+            
+            employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.nom} ${emp.prenom}`;
+                select.appendChild(option);
+            });
+
+            if (!contratId) {
+                alert('ID contrat non spécifié');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
+            const contract = contracts.find(c => c.id === contratId);
+            
+            if (!contract) {
+                alert('Contrat non trouvé');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Fill form with contract data
+            document.getElementById('contratId').value = contract.id;
+            document.getElementById('employeeSelect').value = contract.employee;
+            document.getElementById('typeContrat').value = contract.typeContrat;
+            document.getElementById('dateDebut').value = contract.dateDebut;
+            if (contract.dateFin) {
+                document.getElementById('dateFin').value = contract.dateFin;
+            }
+        });
+
+        function updateContrat(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Update contract in localStorage
+            const contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
+            const index = contracts.findIndex(c => c.id === data.id);
+            
+            if (index !== -1) {
+                contracts[index] = { ...contracts[index], ...data };
+                localStorage.setItem('contracts', JSON.stringify(contracts));
+                alert('Contrat modifié avec succès');
+                window.location.href = 'index.html';
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Employé</title>
+    <link rel="stylesheet" href="{% static  'css/employe.css' %}">
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>Dashboard</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active">
+                        <a href="#profile">
+                            <span class="material-icons icon">person</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#conge">
+                            <span class="material-icons icon">event</span>
+                            Congé
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#pointage">
+                            <span class="material-icons icon">schedule</span>
+                            Pointage
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#salaire">
+                            <span class="material-icons icon">payments</span>
+                            Salaire
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <div class="search-bar">
+                    <input type="text" placeholder="Rechercher...">
+                    <button><span class="material-icons">search</span></button>
+                </div>
+                <div class="user-info">
+                    <div class="notifications">
+                        <span class="material-icons">notifications</span>
+                    </div>
+                    <div class="user">
+                        <span class="material-icons">account_circle</span>
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard">
+                <div id="content-area">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static  'js/employee.js' %}"></script>
+</body>
+</html>
