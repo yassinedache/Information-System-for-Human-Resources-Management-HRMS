@@ -1,0 +1,154 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier un Employé</title>
+    <link rel="stylesheet" href="{% static  'css/font_awesome.css' %}">
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .submit-btn, .cancel-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+        }
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #e5e7eb;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Modifier un Employé</h2>
+        <form id="employeeForm" method="post" action="{% url 'mod_employe' employe.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text" name="nom" required id="nom" value="{{ employe.nom }}">
+            </div>
+            <div class="form-group">
+                <label>Prénom</label>
+                <input type="text" name="prenom" required id="prenom" value="{{ employe.prenom }}">
+            </div>
+            <div class="form-group">
+                <label>Service</label>
+                <select name="service" required id="service">
+                    {% for service in services %}
+                    <option value="{{ service.id }}" {% if employe.service and employe.service.id == service.id %}selected{% endif %}>
+                        {{ service.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date de naissance</label>
+                <input type="date" name="dateNaissance" required id="dateNaissance" value="{{ employe.date_naissance|date:'Y-m-d' }}">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required id="email" value="{{ employe.email }}">
+            </div>
+            <div class="form-group">
+                <label>État</label>
+                <select name="etat" required id="etat">
+                    <option value="actif" {% if employe.etat == "actif" %}selected{% endif %}>Actif</option>
+                    <option value="conge" {% if employe.etat == "conge" %}selected{% endif %}>Congé</option>
+                    <option value="inactive" {% if employe.etat == "inactive" %}selected{% endif %}>Inactif</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="submit-btn">Enregistrer</button>
+                <button type="button" onclick="window.location.href='#'" class="cancel-btn">Annuler</button>
+            </div>
+        </form>
+        
+    </div>
+    <script>
+        // Get employee ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const employeeId = urlParams.get('id');
+
+        // Load employee data
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!employeeId) {
+                alert('ID employé non spécifié');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const employee = employees.find(emp => emp.id === employeeId);
+            
+            if (!employee) {
+                alert('Employé non trouvé');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Fill form with employee data
+            document.getElementById('employeeId').value = employee.id;
+            document.getElementById('nom').value = employee.nom;
+            document.getElementById('prenom').value = employee.prenom;
+            document.getElementById('service').value = employee.service;
+            document.getElementById('dateEmbauche').value = employee.dateEmbauche;
+            document.getElementById('dateNaissance').value = employee.dateNaissance;
+            document.getElementById('email').value = employee.email;
+            document.getElementById('etat').value = employee.etat;
+        });
+
+        function updateEmployee(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Update employee in localStorage
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const index = employees.findIndex(emp => emp.id === data.id);
+            
+            if (index !== -1) {
+                employees[index] = { ...employees[index], ...data };
+                localStorage.setItem('employees', JSON.stringify(employees));
+                alert('Employé modifié avec succès');
+                window.location.href = 'index.html';
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>

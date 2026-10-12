@@ -1,0 +1,132 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demander un Congé</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f6fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4169e1;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit {
+            background-color: #4169e1;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #3558c4;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Demander un Congé</h1>
+        <form action="{% url 'employe' %}" method="GET">
+            <div class="form-group">
+                <label for="type_conge">Type de Congé</label>
+                <select id="type_conge" name="type_conge" required>
+                    <option value="">Sélectionnez un type</option>
+                    <option value="cp">Congé payé</option>
+                    <option value="rtt">RTT</option>
+                    <option value="ss">Congé sans solde</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date_debut">Date de début</label>
+                <input type="date" id="date_debut" name="date_debut" required>
+            </div>
+            <div class="form-group">
+                <label for="date_fin">Date de fin</label>
+                <input type="date" id="date_fin" name="date_fin" required>
+            </div>
+            <div class="form-group">
+                <label for="motif">Motif (optionnel)</label>
+                <textarea id="motif" name="motif"></textarea>
+            </div>
+            <div class="buttons">
+                <a href="{% url 'employe' %}" class="btn btn-cancel">Annuler</a>
+                <button type="submit" class="btn btn-submit">Soumettre la demande</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

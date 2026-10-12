@@ -1,0 +1,164 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier un Congé</title>
+    <link rel="stylesheet" href="{% static  'css/font_awesome.css' %}">
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .submit-btn, .cancel-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+        }
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #e5e7eb;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Modifier un Congé</h2>
+        <form id="congeForm" onsubmit="return updateConge(event)">
+            <input type="hidden" id="congeId" name="id">
+            <div class="form-group">
+                <label>Employé</label>
+                <select name="employee" required id="employeeSelect">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Type de congé</label>
+                <select name="typeConge" required id="typeConge">
+                    <option value="annuel">Congé annuel</option>
+                    <option value="maladie">Congé maladie</option>
+                    <option value="maternite">Congé maternité/paternité</option>
+                    <option value="sans_solde">Congé sans solde</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" required rows="4" id="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Date de début</label>
+                <input type="date" name="dateDebut" required id="dateDebut">
+            </div>
+            <div class="form-group">
+                <label>Date de fin</label>
+                <input type="date" name="dateFin" required id="dateFin">
+            </div>
+            <div class="form-group">
+                <label>Statut</label>
+                <select name="status" required id="status">
+                    <option value="pending">En attente</option>
+                    <option value="approved">Approuvé</option>
+                    <option value="rejected">Rejeté</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="window.location.href='index.html'">Annuler</button>
+                <button type="submit" class="submit-btn">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Get leave ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const congeId = urlParams.get('id');
+
+        // Load leave data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load employees for select
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const select = document.getElementById('employeeSelect');
+            
+            employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.nom} ${emp.prenom}`;
+                select.appendChild(option);
+            });
+
+            if (!congeId) {
+                alert('ID congé non spécifié');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const leaves = JSON.parse(localStorage.getItem('leaves') || '[]');
+            const leave = leaves.find(l => l.id === congeId);
+            
+            if (!leave) {
+                alert('Congé non trouvé');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Fill form with leave data
+            document.getElementById('congeId').value = leave.id;
+            document.getElementById('employeeSelect').value = leave.employee;
+            document.getElementById('typeConge').value = leave.typeConge;
+            document.getElementById('description').value = leave.description;
+            document.getElementById('dateDebut').value = leave.dateDebut;
+            document.getElementById('dateFin').value = leave.dateFin;
+            document.getElementById('status').value = leave.status;
+        });
+
+        function updateConge(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Update leave in localStorage
+            const leaves = JSON.parse(localStorage.getItem('leaves') || '[]');
+            const index = leaves.findIndex(l => l.id === data.id);
+            
+            if (index !== -1) {
+                leaves[index] = { ...leaves[index], ...data };
+                localStorage.setItem('leaves', JSON.stringify(leaves));
+                alert('Congé modifié avec succès');
+                window.location.href = 'index.html';
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>
